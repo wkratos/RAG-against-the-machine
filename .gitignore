@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Generated data and provided corpus
+data/raw/
+data/processed/
+data/datasets/
+data/output/
+
+# Local evaluation executables
+moulinette
+moulinette-ubuntu
+moulinette-fedora
+
+# Model files
+*.safetensors
+*.gguf
+
+data/raw/
+data/processed/
+data/datasets/
+data/output/
+.venv/
+*.zip
+
+moulinette
+moulinette-ubuntu
+moulinette-fedora
