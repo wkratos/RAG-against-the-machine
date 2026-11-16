@@ -1,7 +1,9 @@
 from pathlib import Path
 from .python_chunker import chunk_python
 from .text_chunker import chunk_text
+from sklearn.feature_extraction.text import TfidfVectorizer
 import json
+import joblib
 
 
 def index_file(
@@ -28,8 +30,8 @@ def index_file(
     return records
 
 def index_corpus(
-    source_directory: str,
-    output_directory: str,
+    source_directory: str = "data/raw",
+    output_directory: str = "data/processed",
     max_chunk_size: int = 2000
 ) -> None:
     """Index all supported files in a directory."""
@@ -40,6 +42,12 @@ def index_corpus(
             records.extend(index_file(str(path), max_chunk_size))
     output_path = Path(output_directory)
     output_path.mkdir(parents=True, exist_ok=True)
-    with open(output_path / "index.json", "w") as file:
+    with open(output_path / "index.json", "w", encoding="utf-8") as file:
         json.dump(records, file)
-   
+    documents = [record["text"] for record in records]
+    vect = TfidfVectorizer()
+    matrix = vect.fit_transform(documents)
+    joblib.dump(
+        (vect, matrix, records),
+        output_path / "vmr.joblib"
+    )

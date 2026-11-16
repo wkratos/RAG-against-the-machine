@@ -5,7 +5,9 @@ description = "RAG system for the vLLM codebase"
 requires-python = ">=3.10"
 dependencies = [
     "fire>=0.7.1",
+    "joblib>=1.6.0",
     "pydantic>=2.14.3",
+    "scikit-learn>=1.7.2",
     "tqdm>=4.70.1",
 ]
 
