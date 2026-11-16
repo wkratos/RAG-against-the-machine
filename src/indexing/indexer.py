@@ -14,7 +14,10 @@ def index_file(
     with open(filepath, "r", encoding="utf-8") as file:
         content = file.read()
     if Path(filepath).suffix == ".py":
-        chunks = chunk_python(content, max_chunk_size)
+        try:
+            chunks = chunk_python(content, max_chunk_size)
+        except SyntaxError:
+            chunks = chunk_text(content, max_chunk_size)
     else:
         chunks = chunk_text(content, max_chunk_size)
     records = []
