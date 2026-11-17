@@ -23,10 +23,9 @@ def source_iou(a: dict, b: dict) -> float:
 
 def is_match(retrieved: dict, expected: dict) -> bool:
     """Check whether a retrieved source matches a reference."""
-    if (retrieved["file_path"] == expected["file_path"] and
-        source_iou(retrieved, expected) >= 0.05):
-            return True
-    return False
+    if retrieved["file_path"] != expected["file_path"]:
+        return False
+    return source_iou(retrieved, expected) >= 0.05
 
 
 def evaluate_recall(reference_path: str, results_path: str) -> float:
@@ -38,7 +37,7 @@ def evaluate_recall(reference_path: str, results_path: str) -> float:
         expected = json.load(reference)
     with open(results_path, "r", encoding="utf-8") as file:
         results = json.load(file)
-    
+
     results_by_id = {
         result["question_id"]: result
         for result in results["search_results"]
@@ -50,14 +49,14 @@ def evaluate_recall(reference_path: str, results_path: str) -> float:
             continue
         retrieved_sources = results_by_id.get(
             question_id, {}).get("retrieved_sources", [])
-        
+
         matched = 0
         for ex in expected_sources:
             if any(is_match(result, ex) for result in retrieved_sources):
                 matched += 1
         recall = matched / len(expected_sources)
         total_recall += recall
-        count +=1
+        count += 1
 
     return total_recall / count if count > 0 else 0.0
 
@@ -68,7 +67,7 @@ def analyze_failures(reference_path: str, results_path: str) -> None:
         expected = json.load(reference)
     with open(results_path, "r", encoding="utf-8") as file:
         results = json.load(file)
-    
+
     results_by_id = {
         result["question_id"]: result
         for result in results["search_results"]
@@ -84,7 +83,7 @@ def analyze_failures(reference_path: str, results_path: str) -> None:
             if any(is_match(ret, ex) for ret in retrieved_sources):
                 continue
             elif any(ret["file_path"] == ex["file_path"]
-                    for ret in retrieved_sources):
+                     for ret in retrieved_sources):
                 print("WRONG RANGE:", question["question"])
             else:
                 print("FILE MISSING:", question["question"])

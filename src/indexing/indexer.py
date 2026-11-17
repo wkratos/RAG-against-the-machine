@@ -10,7 +10,7 @@ import joblib
 def index_file(
     filepath: str,
     max_chunk_size: int = 2000
-    ) -> list[dict]:
+) -> list[dict]:
     """Read and chunk one source file."""
     with open(filepath, "r", encoding="utf-8") as file:
         content = file.read()
@@ -33,30 +33,30 @@ def index_file(
 
     return records
 
+
 def index_corpus(
     source_directory: str = "data/raw",
     output_directory: str = "data/processed",
     max_chunk_size: int = 2000
-    ) -> None:
+) -> None:
     """Index all supported files in a directory."""
     records = []
     for path in Path(source_directory).rglob("*"):
-        if (path.is_file()
-            and path.suffix.lower() in {".py", ".md", ".txt"}):
+        if (path.is_file() and path.suffix.lower() in {".py", ".md", ".txt"}):
             records.extend(index_file(str(path), max_chunk_size))
     output_path = Path(output_directory)
     output_path.mkdir(parents=True, exist_ok=True)
     with open(output_path / "index.json", "w", encoding="utf-8") as file:
         json.dump(records, file)
-    documents = [record["text"] +"\n" + record["file_path"]
-                for record in records]
+    documents = [record["text"] + "\n" + record["file_path"]
+                 for record in records]
 
     vect = FeatureUnion(
         [
             ("word", TfidfVectorizer(
-            token_pattern=r"(?u)[A-Za-z0-9]+",
-            ngram_range=(1,2),
-            sublinear_tf=True
+                token_pattern=r"(?u)[A-Za-z0-9]+",
+                ngram_range=(1, 2),
+                sublinear_tf=True
             )),
             ("char", TfidfVectorizer(
                 analyzer="char_wb",

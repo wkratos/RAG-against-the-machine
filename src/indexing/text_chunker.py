@@ -5,10 +5,9 @@ def chunk_text(content: str,
     start = 0
     chunks = []
     if max_chunk_size <= 0:
-        raise ValueError("max_chunk_size must be positive")        
+        raise ValueError("max_chunk_size must be positive")
     while start < len(content):
         end = min(start + max_chunk_size, len(content))
         chunks.append((start, end))
         start = end
     return chunks
-

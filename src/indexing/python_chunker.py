@@ -5,7 +5,7 @@ def chunk_python(
         content: str,
         max_chunk_size: int = 2000
         ) -> list[tuple[int, int]]:
-    """Split python structures into chunks 
+    """Split python structures into chunks
     and return their structures ranges"""
     chunks = []
     if max_chunk_size <= 0:

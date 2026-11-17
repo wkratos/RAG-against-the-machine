@@ -1,6 +1,6 @@
 from functools import lru_cache
 from transformers import AutoTokenizer, AutoModelForCausalLM
-
+from ..retrieval.retriever import search
 
 MODEL_NAME = "Qwen/Qwen3-0.6B"
 
@@ -48,3 +48,20 @@ def generate_answer(question: str, context: str) -> str:
         new_tokens,
         skip_special_tokens=True
     ).strip()
+
+
+def answer_question(question: str, k: int = 5):
+    retrieved = search(question, k)
+    context = ""
+    sources = []
+
+    for record in retrieved:
+        context += record["text"] + "\n\n"
+    answer = generate_answer(question, context)
+    for document in retrieved:
+        source = {}
+        source["file_path"] = document["file_path"]
+        source["first_character_index"] = document["first_character_index"]
+        source["last_character_index"] = document["last_character_index"]
+        sources.append(source)
+    return {"answer": answer, "sources": sources}
