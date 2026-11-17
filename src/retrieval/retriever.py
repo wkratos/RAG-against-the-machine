@@ -18,5 +18,7 @@ def search(query: str, k: int = 5) -> list[dict]:
     scores = (matrix @ query_vector.T).toarray().ravel()
     ranked_indices = scores.argsort()[::-1]
     for i in ranked_indices[:k]:
+        if scores[i] <= 0:
+            continue
         tops.append(records[int(i)])
     return tops

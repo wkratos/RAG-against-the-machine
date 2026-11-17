@@ -8,7 +8,9 @@ dependencies = [
     "joblib>=1.6.0",
     "pydantic>=2.14.3",
     "scikit-learn>=1.7.2",
+    "torch>=2.14.1",
     "tqdm>=4.70.1",
+    "transformers>=5.20.2",
 ]
 
 [dependency-groups]
@@ -16,3 +18,11 @@ dev = [
     "flake8>=7.4.1",
     "mypy>=2.4.1",
 ]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

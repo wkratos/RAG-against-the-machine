@@ -60,3 +60,31 @@ def evaluate_recall(reference_path: str, results_path: str) -> float:
         count +=1
 
     return total_recall / count if count > 0 else 0.0
+
+
+def analyze_failures(reference_path: str, results_path: str) -> None:
+    """Report why retrieved sources fail to match references."""
+    with open(reference_path, "r", encoding="utf-8") as reference:
+        expected = json.load(reference)
+    with open(results_path, "r", encoding="utf-8") as file:
+        results = json.load(file)
+    
+    results_by_id = {
+        result["question_id"]: result
+        for result in results["search_results"]
+    }
+    for question in expected["rag_questions"]:
+        question_id = question["question_id"]
+        expected_sources = question["sources"]
+        if not expected_sources:
+            continue
+        retrieved_sources = results_by_id.get(
+            question_id, {}).get("retrieved_sources", [])
+        for ex in expected_sources:
+            if any(is_match(ret, ex) for ret in retrieved_sources):
+                continue
+            elif any(ret["file_path"] == ex["file_path"]
+                    for ret in retrieved_sources):
+                print("WRONG RANGE:", question["question"])
+            else:
+                print("FILE MISSING:", question["question"])
