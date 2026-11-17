@@ -66,7 +66,7 @@ def index_corpus(
                 sublinear_tf=True
             ))
         ],
-        transformer_weights={"word": 1.0, "char": 0.5}
+        transformer_weights={"word": 1.0, "char": 1.0}
     )
     matrix = vect.fit_transform(documents)
     joblib.dump(
